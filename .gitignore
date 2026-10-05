@@ -1,2 +1,5 @@
 /src/local-docs
 /publish
+.vs/
+bin/
+obj/

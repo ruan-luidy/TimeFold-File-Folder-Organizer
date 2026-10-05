@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/TimeFold.Core/TimeFold.Core.csproj" />
+    <Project Path="src/TimeFold.csproj" />
+    <Project Path="src/TimeFold.Wpf/TimeFold.Wpf.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/TimeFold.Core.Tests/TimeFold.Core.Tests.csproj" />
+  </Folder>
+</Solution>

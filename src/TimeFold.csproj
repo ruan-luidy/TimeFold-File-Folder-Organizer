@@ -15,6 +15,8 @@
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
     <AssemblyName>TimeFold</AssemblyName>
     <RootNamespace>FileOrganizer</RootNamespace>
+    <!-- The WPF version lives next to this project; keep its sources and obj out of the WinForms build -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);TimeFold.Core\**;TimeFold.Wpf\**</DefaultItemExcludes>
     <Version>1.1.1</Version>
   </PropertyGroup>
 
