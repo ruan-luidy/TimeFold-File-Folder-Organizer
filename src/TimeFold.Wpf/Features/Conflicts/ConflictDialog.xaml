@@ -1,0 +1,132 @@
+<controls:DialogCard
+    x:Class="TimeFold.Wpf.Features.Conflicts.ConflictDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:TimeFold.Wpf.Shared.Controls"
+    xmlns:icons="clr-namespace:TimeFold.Wpf.Shared.Icons"
+    Width="880"
+    Background="Transparent">
+
+    <Border Style="{StaticResource DialogBorderAnimated}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <DockPanel Margin="22,18,22,12">
+                <Grid
+                    Width="36"
+                    Height="36"
+                    Margin="0,0,12,0"
+                    VerticalAlignment="Top"
+                    DockPanel.Dock="Left">
+                    <Border Background="{DynamicResource WarningBrush}" CornerRadius="{StaticResource Radius.Md}" Opacity="0.18" />
+                    <Path
+                        Width="18"
+                        Height="18"
+                        Data="{icons:Phosphor WarningBold}"
+                        Fill="{DynamicResource WarningBrush}"
+                        Stretch="Uniform" />
+                </Grid>
+                <StackPanel>
+                    <TextBlock x:Name="TitleText" Style="{StaticResource DialogTitle}" />
+                    <TextBlock
+                        Margin="0,4,0,0"
+                        Style="{StaticResource CaptionText}"
+                        Text="Existing destination folders found. TimeFold will NEVER touch or overwrite your existing folders. New files will be saved into separate 'Folder (1)' subfolders, keeping your original folders 100% intact." />
+                </StackPanel>
+            </DockPanel>
+
+            <DataGrid
+                x:Name="Table"
+                Grid.Row="1"
+                Height="300"
+                Margin="14,0,14,12"
+                CanUserSortColumns="False"
+                Style="{StaticResource TerminalDataGrid}">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Width="1.2*" Header="Item Name">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Foreground="{DynamicResource PrimaryTextBrush}" Style="{StaticResource TextCell}" Text="{Binding Item.Name}" ToolTip="{Binding Item.FullPath}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Width="Auto" Header="Type">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock x:Name="Kind" Foreground="{DynamicResource SecondaryTextBrush}" Style="{StaticResource TextCell}" Text="File" />
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Item.IsDirectory}" Value="True">
+                                        <Setter TargetName="Kind" Property="Text" Value="Folder" />
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Width="*" Header="Target Folder">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Foreground="{DynamicResource Target.Brush}" Style="{StaticResource TextCell}" Text="{Binding TargetFolder}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Width="1.6*" Header="Conflict Details">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    x:Name="Details"
+                                    Foreground="{DynamicResource WarningBrush}"
+                                    Style="{StaticResource TextCell}"
+                                    Text="{Binding Description}"
+                                    ToolTip="{Binding Description}" />
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Type}" Value="TargetFolderMatchesExisting">
+                                        <Setter TargetName="Details" Property="Foreground" Value="{DynamicResource DangerBrush}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Type}" Value="TargetFolderMatchesSelf">
+                                        <Setter TargetName="Details" Property="Foreground" Value="{DynamicResource PrimaryBrush}" />
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Width="2*" Header="Proposed Resolution">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Foreground="{DynamicResource PrimaryTextBrush}" Style="{StaticResource TextCell}" Text="{Binding ProposedAction}" ToolTip="{Binding ProposedAction}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <Border Grid.Row="2" Style="{StaticResource DialogFooter}">
+                <DockPanel>
+                    <Button
+                        x:Name="CancelButton"
+                        MinWidth="90"
+                        Click="Cancel_Click"
+                        Content="Cancel"
+                        DockPanel.Dock="Left"
+                        Style="{StaticResource ButtonDefault}" />
+                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                        <Button
+                            x:Name="SkipButton"
+                            Margin="0,0,10,0"
+                            Click="Skip_Click"
+                            Content="Skip Colliding Files"
+                            Style="{StaticResource ButtonDefault}" />
+                        <Button
+                            x:Name="RenameButton"
+                            Click="Rename_Click"
+                            Content="Create Folder (1) + Safe Rename"
+                            Style="{StaticResource ButtonPrimary}" />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Border>
+</controls:DialogCard>

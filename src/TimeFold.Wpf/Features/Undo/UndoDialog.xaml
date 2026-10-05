@@ -1,0 +1,123 @@
+<controls:DialogCard
+    x:Class="TimeFold.Wpf.Features.Undo.UndoDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:TimeFold.Wpf.Shared.Controls"
+    xmlns:icons="clr-namespace:TimeFold.Wpf.Shared.Icons"
+    Width="560"
+    Background="Transparent">
+
+    <Border Style="{StaticResource DialogBorderAnimated}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Margin="24,20,24,18">
+                <DockPanel>
+                    <Grid
+                        Width="36"
+                        Height="36"
+                        Margin="0,0,12,0"
+                        DockPanel.Dock="Left">
+                        <Border Background="{DynamicResource Accent.SoftBrush}" CornerRadius="{StaticResource Radius.Md}" />
+                        <Path
+                            Width="18"
+                            Height="18"
+                            Data="{icons:Phosphor ArrowCounterClockwiseBold}"
+                            Fill="{DynamicResource PrimaryBrush}"
+                            Stretch="Uniform" />
+                    </Grid>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Style="{StaticResource DialogTitle}" Text="Undo Organization (Beta)" />
+                        <TextBlock Style="{StaticResource CaptionText}" Text="Review and choose how you would like to restore your files." />
+                    </StackPanel>
+                </DockPanel>
+
+                <!-- preflight numbers -->
+                <Grid Margin="0,16,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border Padding="12,10" Background="{DynamicResource SecondaryRegionBrush}" CornerRadius="{StaticResource Radius.Md}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource StatLabel}" Text="READY TO RESTORE" />
+                            <TextBlock x:Name="ReadyText" FontSize="{StaticResource FontSize.Title}" Style="{StaticResource StatValue}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="2" Padding="12,10" Background="{DynamicResource SecondaryRegionBrush}" CornerRadius="{StaticResource Radius.Md}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource StatLabel}" Text="MISSING" />
+                            <TextBlock x:Name="MissingText" FontSize="{StaticResource FontSize.Title}" Style="{StaticResource StatValue}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Grid.Column="4" Padding="12,10" Background="{DynamicResource SecondaryRegionBrush}" CornerRadius="{StaticResource Radius.Md}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource StatLabel}" Text="COLLISIONS" />
+                            <TextBlock x:Name="CollisionsText" FontSize="{StaticResource FontSize.Title}" Style="{StaticResource StatValue}" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <TextBlock x:Name="OrganizedText" Margin="0,12,0,0" Style="{StaticResource CaptionText}" />
+                <TextBlock x:Name="SourceText" Margin="0,2,0,0" Style="{StaticResource PathText}" />
+                <TextBlock
+                    x:Name="StaleText"
+                    Margin="0,8,0,0"
+                    FontSize="{StaticResource FontSize.Sm}"
+                    Foreground="{DynamicResource WarningBrush}"
+                    TextWrapping="Wrap"
+                    Visibility="Collapsed" />
+
+                <TextBlock Margin="0,16,0,6" Style="{StaticResource PanelHeaderText}" Text="RESTORATION DESTINATION" />
+                <RadioButton x:Name="OriginalOption" IsChecked="True" Style="{StaticResource OptionCard}">
+                    <StackPanel>
+                        <TextBlock FontWeight="SemiBold" Style="{StaticResource BodyText}" Text="Restore back to original locations" />
+                        <TextBlock Style="{StaticResource CaptionText}" Text="Default, in-place undo" />
+                    </StackPanel>
+                </RadioButton>
+                <RadioButton x:Name="DedicatedOption" Style="{StaticResource OptionCard}">
+                    <StackPanel>
+                        <TextBlock FontWeight="SemiBold" Style="{StaticResource BodyText}" Text="Restore into a safe, dedicated folder" />
+                        <TextBlock Style="{StaticResource CaptionText}" Text="Prevents source clutter" />
+                        <TextBlock x:Name="DedicatedPathText" Margin="0,4,0,0" Style="{StaticResource PathText}" />
+                    </StackPanel>
+                </RadioButton>
+
+                <TextBlock
+                    Margin="0,8,0,0"
+                    Style="{StaticResource CaptionText}"
+                    Text="Please make sure the files are closed in other programs (Office, PDF readers). Any empty folders created by TimeFold will be safely cleaned up." />
+            </StackPanel>
+
+            <Border Grid.Row="1" Style="{StaticResource DialogFooter}">
+                <DockPanel>
+                    <Button
+                        Click="Discard_Click"
+                        Content="Discard Undo"
+                        DockPanel.Dock="Left"
+                        Style="{StaticResource ButtonDefault}" />
+                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                        <Button
+                            MinWidth="90"
+                            Margin="0,0,10,0"
+                            Click="Cancel_Click"
+                            Content="Cancel"
+                            Style="{StaticResource ButtonDefault}" />
+                        <Button
+                            x:Name="StartButton"
+                            MinWidth="110"
+                            Click="Start_Click"
+                            Content="Start Undo"
+                            Style="{StaticResource ButtonPrimary}" />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Border>
+</controls:DialogCard>

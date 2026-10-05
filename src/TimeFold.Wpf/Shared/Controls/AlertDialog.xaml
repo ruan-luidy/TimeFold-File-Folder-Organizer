@@ -1,0 +1,87 @@
+<controls:DialogCard
+    x:Class="TimeFold.Wpf.Shared.Controls.AlertDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:TimeFold.Wpf.Shared.Controls"
+    Width="400"
+    Background="Transparent">
+
+    <!-- Icon and title, the message, "show details" with the technical text, then the grey footer with the buttons -->
+    <Border Style="{StaticResource DialogBorderAnimated}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Margin="24,20,24,16">
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                    <Path
+                        x:Name="HeaderIcon"
+                        Width="20"
+                        Height="20"
+                        Margin="0,0,8,0"
+                        VerticalAlignment="Center"
+                        Stretch="Uniform" />
+                    <TextBlock x:Name="TitleText" VerticalAlignment="Center" Style="{StaticResource DialogTitle}" />
+                </StackPanel>
+
+                <TextBlock
+                    x:Name="MessageText"
+                    Margin="0,12,0,0"
+                    HorizontalAlignment="Center"
+                    FontSize="{StaticResource FontSize.Body}"
+                    Foreground="{DynamicResource SecondaryTextBrush}"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap" />
+
+                <CheckBox
+                    x:Name="OptionCheck"
+                    Margin="0,14,0,0"
+                    HorizontalAlignment="Center"
+                    Visibility="Collapsed" />
+
+                <TextBlock
+                    x:Name="DetailsLink"
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Center"
+                    FontSize="{StaticResource FontSize.Sm}"
+                    Visibility="Collapsed">
+                    <Hyperlink Click="DetailsLink_Click" Foreground="{DynamicResource PrimaryBrush}">
+                        <Run x:Name="DetailsLinkText" Text="Show details" />
+                    </Hyperlink>
+                </TextBlock>
+
+                <TextBox
+                    x:Name="DetailsBox"
+                    MaxHeight="220"
+                    Margin="0,10,0,0"
+                    Padding="8"
+                    FontFamily="{StaticResource FontFamily.Numbers}"
+                    FontSize="{StaticResource FontSize.XS}"
+                    HorizontalScrollBarVisibility="Disabled"
+                    IsReadOnly="True"
+                    TextWrapping="Wrap"
+                    VerticalScrollBarVisibility="Auto"
+                    Visibility="Collapsed" />
+            </StackPanel>
+
+            <Border Grid.Row="1" Style="{StaticResource DialogFooter}">
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                    <Button
+                        x:Name="SecondaryButton"
+                        MinWidth="100"
+                        Margin="0,0,10,0"
+                        Click="SecondaryButton_Click"
+                        Style="{StaticResource ButtonDefault}"
+                        Visibility="Collapsed" />
+                    <Button
+                        x:Name="PrimaryButton"
+                        MinWidth="100"
+                        Click="PrimaryButton_Click"
+                        Style="{StaticResource ButtonPrimary}" />
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</controls:DialogCard>

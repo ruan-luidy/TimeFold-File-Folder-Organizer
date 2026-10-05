@@ -1,0 +1,199 @@
+<UserControl
+    x:Class="TimeFold.Wpf.Features.Source.SourceView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:TimeFold.Wpf.Shared.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:icons="clr-namespace:TimeFold.Wpf.Shared.Icons"
+    xmlns:local="clr-namespace:TimeFold.Wpf.Features.Source"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DataContext="{d:DesignInstance Type=local:SourceViewModel}"
+    mc:Ignorable="d">
+
+    <StackPanel>
+        <!-- ===== SOURCE ===== -->
+        <Border Margin="0,0,0,10" Style="{StaticResource SurfaceCard}">
+            <StackPanel>
+                <DockPanel Margin="0,0,0,8">
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                        <Button
+                            x:Name="RecentButton"
+                            Click="RecentButton_Click"
+                            Content="Recent"
+                            Style="{StaticResource FlatButton}"
+                            Tag="{icons:Phosphor ClockCounterClockwiseBold}"
+                            ToolTip="Quickly select from your recently organized folders" />
+                        <Button
+                            Command="{Binding OpenSourceInExplorerCommand}"
+                            IsEnabled="{Binding HasSource}"
+                            Style="{StaticResource IconButton}"
+                            Tag="{icons:Phosphor ArrowSquareOutBold}"
+                            ToolTip="Open the source folder in File Explorer" />
+                    </StackPanel>
+                    <TextBlock Style="{StaticResource PanelHeaderText}" Text="SOURCE" />
+                </DockPanel>
+
+                <!-- Drop zone: a folder (or a file, for its folder) dropped anywhere on the window lands here -->
+                <Border
+                    x:Name="DropZone"
+                    Padding="14"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    CornerRadius="{StaticResource Radius.Md}"
+                    ToolTip="Drag and drop any folder or files here to inspect (or click Browse)">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsDragOver}" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource DropZone.Brush}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <Grid>
+                        <!-- dashed outline -->
+                        <Rectangle
+                            Margin="-14"
+                            RadiusX="6"
+                            RadiusY="6"
+                            Stroke="{DynamicResource BorderBrush}"
+                            StrokeDashArray="4 3"
+                            StrokeThickness="1.2">
+                            <Rectangle.Style>
+                                <Style TargetType="Rectangle">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsDragOver}" Value="True">
+                                            <Setter Property="Stroke" Value="{DynamicResource PrimaryBrush}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Rectangle.Style>
+                        </Rectangle>
+
+                        <!-- nothing chosen -->
+                        <StackPanel Visibility="{Binding HasSource, Converter={StaticResource Boolean2VisibilityReConverter}}">
+                            <Path
+                                Width="22"
+                                Height="22"
+                                HorizontalAlignment="Center"
+                                Data="{icons:Phosphor TrayArrowDownBold}"
+                                Fill="{DynamicResource PrimaryBrush}"
+                                Stretch="Uniform" />
+                            <TextBlock
+                                Margin="0,8,0,2"
+                                HorizontalAlignment="Center"
+                                FontWeight="SemiBold"
+                                Style="{StaticResource BodyText}"
+                                Text="Drop a folder here" />
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                Style="{StaticResource CaptionText}"
+                                Text="or pick one to inspect" />
+                            <StackPanel
+                                Margin="0,10,0,0"
+                                HorizontalAlignment="Center"
+                                Orientation="Horizontal">
+                                <Button
+                                    Margin="0,0,6,0"
+                                    Command="{Binding BrowseCommand}"
+                                    Content="Browse..."
+                                    Style="{StaticResource ToolbarButtonPrimary}"
+                                    ToolTip="Browse your computer to select a folder to organize" />
+                                <Button
+                                    Command="{Binding UseCurrentFolderCommand}"
+                                    Content="Use app folder"
+                                    Style="{StaticResource ToolbarButton}"
+                                    ToolTip="Use the folder where this application is currently located" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- the chosen folder -->
+                        <DockPanel Visibility="{Binding HasSource, Converter={StaticResource Boolean2VisibilityConverter}}">
+                            <Grid
+                                Width="34"
+                                Height="34"
+                                Margin="0,0,10,0"
+                                VerticalAlignment="Top"
+                                DockPanel.Dock="Left">
+                                <Border Background="{DynamicResource Accent.SoftBrush}" CornerRadius="{StaticResource Radius.Md}" />
+                                <Path
+                                    Width="16"
+                                    Height="16"
+                                    Data="{icons:Phosphor FolderOpenBold}"
+                                    Fill="{DynamicResource PrimaryBrush}"
+                                    Stretch="Uniform" />
+                            </Grid>
+                            <Button
+                                Margin="6,0,0,0"
+                                VerticalAlignment="Top"
+                                Command="{Binding BrowseCommand}"
+                                Content="Change"
+                                DockPanel.Dock="Right"
+                                Style="{StaticResource ToolbarButton}" />
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock
+                                    FontWeight="SemiBold"
+                                    Style="{StaticResource BodyText}"
+                                    Text="{Binding SourceName}"
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
+                                <TextBlock
+                                    Margin="0,2,0,0"
+                                    Foreground="{DynamicResource SecondaryTextBrush}"
+                                    Style="{StaticResource PathText}"
+                                    Text="{Binding SourceFolder}" />
+                            </StackPanel>
+                        </DockPanel>
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </Border>
+
+        <!-- ===== DESTINATION ===== -->
+        <Border Margin="0,0,0,10" Style="{StaticResource SurfaceCard}">
+            <StackPanel>
+                <TextBlock Margin="0,0,0,4" Style="{StaticResource PanelHeaderText}" Text="DESTINATION" />
+
+                <controls:SettingRow Label="Use source folder as destination" ToolTip="Create the sorted date folders directly inside the source folder">
+                    <ToggleButton IsChecked="{Binding UseSourceAsOutput}" Style="{StaticResource RowSwitch}" />
+                </controls:SettingRow>
+
+                <DockPanel Margin="0,4,0,6">
+                    <Button
+                        Margin="6,0,0,0"
+                        Command="{Binding BrowseOutputCommand}"
+                        Content="Browse..."
+                        DockPanel.Dock="Right"
+                        IsEnabled="{Binding UseSourceAsOutput, Converter={StaticResource Boolean2BooleanReConverter}}"
+                        Style="{StaticResource ToolbarButton}"
+                        ToolTip="Choose a different destination folder for the sorted date folders" />
+                    <Border
+                        Height="{StaticResource Toolbar.ControlHeight}"
+                        Padding="8,0"
+                        Background="{DynamicResource SecondaryRegionBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="{StaticResource Radius.Sm}"
+                        ToolTip="{Binding OutputTooltip}">
+                        <Grid VerticalAlignment="Center">
+                            <TextBlock Style="{StaticResource PathText}" Text="{Binding OutputText}" ToolTip="{x:Null}" />
+                            <TextBlock
+                                Foreground="{DynamicResource ThirdlyTextBrush}"
+                                Style="{StaticResource CaptionText}"
+                                Text="Pick a destination folder"
+                                Visibility="{Binding OutputText, Converter={StaticResource String2VisibilityReConverter}}" />
+                        </Grid>
+                    </Border>
+                </DockPanel>
+
+                <controls:SettingRow Description="Isolates the run in a timestamped folder" Label="Create 'Sorted_...' subfolder">
+                    <ToggleButton IsChecked="{Binding CreateSortedSubfolder}" Style="{StaticResource RowSwitch}" />
+                </controls:SettingRow>
+
+                <controls:SettingRow Description="Moves whole folders intact; never flattens what is inside" Label="Also organize folders">
+                    <ToggleButton IsChecked="{Binding IncludeFolders}" Style="{StaticResource RowSwitch}" />
+                </controls:SettingRow>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>

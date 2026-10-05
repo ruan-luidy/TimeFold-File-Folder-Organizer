@@ -1,0 +1,187 @@
+<UserControl
+    x:Class="TimeFold.Wpf.Features.FileTypes.FileTypesPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:TimeFold.Wpf.Shared.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:icons="clr-namespace:TimeFold.Wpf.Shared.Icons"
+    xmlns:local="clr-namespace:TimeFold.Wpf.Features.FileTypes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DataContext="{d:DesignInstance Type=local:FileTypesViewModel}"
+    mc:Ignorable="d">
+
+    <StackPanel>
+        <controls:MasonryPanel Margin="0,0,0,12" Style="{StaticResource SettingsPage}">
+            <controls:SettingsPanel
+                Description="Text around every category folder name (Category and hybrid modes)"
+                Header="Category folders"
+                Icon="{icons:Phosphor SquaresFourBold}">
+                <StackPanel>
+                    <controls:SettingRow Label="Category prefix">
+                        <hc:TextBox
+                            hc:InfoElement.Placeholder="e.g. Cat_"
+                            MaxLength="{Binding MaxLength}"
+                            Style="{StaticResource RowField}"
+                            Text="{Binding CategoryPrefix, UpdateSourceTrigger=PropertyChanged, Delay=300}" />
+                    </controls:SettingRow>
+                    <controls:SettingRow Label="Category suffix">
+                        <hc:TextBox
+                            hc:InfoElement.Placeholder="e.g. _Files"
+                            MaxLength="{Binding MaxLength}"
+                            Style="{StaticResource RowField}"
+                            Text="{Binding CategorySuffix, UpdateSourceTrigger=PropertyChanged, Delay=300}" />
+                    </controls:SettingRow>
+                </StackPanel>
+            </controls:SettingsPanel>
+
+            <controls:SettingsPanel
+                Description="Preserve relationships between parent files and auxiliary assets across all organization modes"
+                Header="Smart companion pairing"
+                Icon="{icons:Phosphor LinkBold}">
+                <StackPanel>
+                    <controls:SettingRow Description="Routes .srt, .vtt, .sub, .ass, .ssa and .smi files into the same target folder as the matching movie, preventing orphaned subtitles." Label="Pair video subtitles alongside movie files">
+                        <ToggleButton IsChecked="{Binding KeepSubtitleCompanionsTogether}" Style="{StaticResource RowSwitch}" />
+                    </controls:SettingRow>
+                    <controls:SettingRow Description="Browser-saved web pages (.html, .htm) and their resource folders (_files, _data) stay together in the same destination folder." Label="Keep saved HTML pages and asset folders paired">
+                        <ToggleButton IsChecked="{Binding KeepHtmlCompanionsTogether}" Style="{StaticResource RowSwitch}" />
+                    </controls:SettingRow>
+                    <Button
+                        Margin="0,6,0,0"
+                        HorizontalAlignment="Left"
+                        Command="{Binding RestorePairingDefaultsCommand}"
+                        Content="Defaults"
+                        Style="{StaticResource FlatButton}"
+                        Tag="{icons:Phosphor ArrowCounterClockwiseBold}" />
+                </StackPanel>
+            </controls:SettingsPanel>
+        </controls:MasonryPanel>
+
+        <!-- the rules table takes the whole width -->
+        <controls:SettingsPanel
+            Description="Customize how file extensions map to organizational categories. Untick an extension to leave it out of its category; right-click for more."
+            Header="Extension rules"
+            Icon="{icons:Phosphor TagBold}">
+            <DockPanel>
+                <DockPanel Margin="0,0,0,8" DockPanel.Dock="Top">
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                        <Button
+                            Margin="6,0,0,0"
+                            Command="{Binding ImportCommand}"
+                            Content="Import..."
+                            Style="{StaticResource ToolbarButton}" />
+                        <Button
+                            Margin="6,0,0,0"
+                            Command="{Binding ExportCommand}"
+                            Content="Export..."
+                            Style="{StaticResource ToolbarButton}" />
+                        <Button
+                            Margin="6,0,0,0"
+                            Command="{Binding ResetToDefaultsCommand}"
+                            Content="Reset to Defaults"
+                            Style="{StaticResource ToolbarButton}" />
+                    </StackPanel>
+                    <hc:TextBox
+                        Width="240"
+                        HorizontalAlignment="Left"
+                        hc:InfoElement.Placeholder="Search extension or category"
+                        Text="{Binding Search, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
+                </DockPanel>
+
+                <!-- add or remap -->
+                <DockPanel Margin="0,8,0,0" DockPanel.Dock="Bottom">
+                    <TextBlock
+                        Margin="0,0,8,0"
+                        VerticalAlignment="Center"
+                        Style="{StaticResource CaptionText}"
+                        Text="Extension" />
+                    <hc:TextBox
+                        Width="100"
+                        hc:InfoElement.Placeholder=".ext"
+                        Text="{Binding NewExtension, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock
+                        Margin="12,0,8,0"
+                        VerticalAlignment="Center"
+                        Style="{StaticResource CaptionText}"
+                        Text="Category" />
+                    <hc:TextBox
+                        x:Name="CategoryField"
+                        Width="200"
+                        hc:InfoElement.Placeholder="Existing or new category"
+                        Text="{Binding NewCategory, UpdateSourceTrigger=PropertyChanged}" />
+                    <Button
+                        Margin="8,0,0,0"
+                        HorizontalAlignment="Left"
+                        Command="{Binding AssignCommand}"
+                        Content="Add / Remap"
+                        Style="{StaticResource ToolbarButtonPrimary}" />
+                </DockPanel>
+
+                <DataGrid
+                    Height="380"
+                    ItemsSource="{Binding Rules}"
+                    PreviewMouseRightButtonDown="Rules_PreviewMouseRightButtonDown"
+                    SelectedItem="{Binding SelectedRule}"
+                    Style="{StaticResource TerminalDataGrid}">
+                    <DataGrid.ContextMenu>
+                        <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                            <MenuItem Command="{Binding RenameSelectedCategoryCommand}" Header="{Binding RenameCategoryText}" />
+                            <MenuItem
+                                Command="{Binding ResetSelectedCategoryNameCommand}"
+                                Header="{Binding ResetCategoryText}"
+                                Visibility="{Binding SelectedCategoryRenamed, Converter={StaticResource Boolean2VisibilityConverter}}" />
+                            <Separator />
+                            <MenuItem Command="{Binding RemapSelectedExtensionCommand}" Header="{Binding RemapText}" />
+                            <MenuItem
+                                Command="{Binding ResetSelectedExtensionOverrideCommand}"
+                                Header="Reset Extension Override"
+                                Visibility="{Binding SelectedHasOverride, Converter={StaticResource Boolean2VisibilityConverter}}" />
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Width="34" CanUserResize="False">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox
+                                        HorizontalAlignment="Center"
+                                        Focusable="False"
+                                        IsChecked="{Binding IsEnabled, UpdateSourceTrigger=PropertyChanged}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="130" Header="Extension" SortMemberPath="Extension">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock FontFamily="{StaticResource FontFamily.Numbers}" Foreground="{DynamicResource PrimaryTextBrush}" Style="{StaticResource TextCell}" Text="{Binding Extension}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="*" Header="Target Category (Folder)" SortMemberPath="Category">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock x:Name="Cat" Foreground="{DynamicResource Target.Brush}" Style="{StaticResource TextCell}" Text="{Binding Category}" />
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding Status}" Value="UserOverride">
+                                            <Setter TargetName="Cat" Property="Foreground" Value="{DynamicResource Target.CustomBrush}" />
+                                            <Setter TargetName="Cat" Property="FontWeight" Value="SemiBold" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Status}" Value="Disabled">
+                                            <Setter TargetName="Cat" Property="Foreground" Value="{DynamicResource ThirdlyTextBrush}" />
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="150" Header="Status" SortMemberPath="StatusText">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Foreground="{DynamicResource SecondaryTextBrush}" Style="{StaticResource TextCell}" Text="{Binding StatusText}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </DockPanel>
+        </controls:SettingsPanel>
+    </StackPanel>
+</UserControl>

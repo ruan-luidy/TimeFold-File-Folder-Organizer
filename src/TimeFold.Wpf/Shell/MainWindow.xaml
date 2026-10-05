@@ -1,0 +1,169 @@
+<hc:Window
+    x:Class="TimeFold.Wpf.Shell.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:icons="clr-namespace:TimeFold.Wpf.Shared.Icons"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:organize="clr-namespace:TimeFold.Wpf.Features.Organize"
+    xmlns:progress="clr-namespace:TimeFold.Wpf.Shared.Progress"
+    xmlns:settings="clr-namespace:TimeFold.Wpf.Features.Settings"
+    xmlns:shell="clr-namespace:TimeFold.Wpf.Shell"
+    Title="TimeFold: File &amp; Folder Organizer"
+    Width="1440"
+    Height="880"
+    MinWidth="980"
+    MinHeight="620"
+    d:DataContext="{d:DesignInstance Type=shell:MainViewModel}"
+    Background="{DynamicResource Workspace.BackgroundBrush}"
+    BorderBrush="{DynamicResource BorderBrush}"
+    Icon="pack://application:,,,/TimeFold;component/Assets/app.ico"
+    NonClientAreaBackground="{DynamicResource RegionBrush}"
+    ShowTitle="False"
+    Topmost="{Binding Topmost}"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+
+    <hc:Window.InputBindings>
+        <KeyBinding Key="F5" Command="{Binding RefreshCommand}" />
+        <KeyBinding Key="Z" Command="{Binding Undo.UndoCommand}" Modifiers="Control" />
+        <KeyBinding Key="N" Command="{Binding NewProjectCommand}" Modifiers="Control" />
+        <KeyBinding Key="O" Command="{Binding BrowseCommand}" Modifiers="Control" />
+        <KeyBinding Key="OemComma" Command="{Binding ToggleSettingsCommand}" Modifiers="Control" />
+        <KeyBinding Key="Escape" Command="{Binding ShowOrganizerCommand}" />
+    </hc:Window.InputBindings>
+
+    <!-- Top bar in the title bar: brand, the two pages, undo, theme and help -->
+    <hc:Window.NonClientAreaContent>
+        <DockPanel Height="36" LastChildFill="False">
+            <StackPanel
+                Margin="12,0,18,0"
+                VerticalAlignment="Center"
+                DockPanel.Dock="Left"
+                Orientation="Horizontal">
+                <Image Width="20" Height="20" Source="pack://application:,,,/TimeFold;component/Assets/app.png" />
+                <TextBlock
+                    Margin="8,0,0,0"
+                    VerticalAlignment="Center"
+                    FontSize="{StaticResource FontSize.Md}"
+                    FontWeight="SemiBold"
+                    Foreground="{DynamicResource PrimaryTextBrush}"
+                    Text="TimeFold" />
+            </StackPanel>
+
+            <Border DockPanel.Dock="Left" Style="{StaticResource SegmentedGroup}">
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton
+                        Command="{Binding ShowOrganizerCommand}"
+                        IsChecked="{Binding IsOrganizePage, Mode=OneWay}"
+                        Style="{StaticResource SegmentedRadio}">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Margin="0,0,6,0" Data="{icons:Phosphor FolderOpenBold}" Style="{StaticResource Icon.Small}" />
+                            <TextBlock Text="Organize" />
+                        </StackPanel>
+                    </RadioButton>
+                    <RadioButton
+                        Command="{Binding OpenSettingsCommand}"
+                        IsChecked="{Binding IsSettingsPage, Mode=OneWay}"
+                        Style="{StaticResource SegmentedRadio}"
+                        ToolTip="Settings (Ctrl+,)">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Margin="0,0,6,0" Data="{icons:Phosphor GearSixBold}" Style="{StaticResource Icon.Small}" />
+                            <TextBlock Text="Settings" />
+                        </StackPanel>
+                    </RadioButton>
+                </StackPanel>
+            </Border>
+
+            <StackPanel
+                Margin="0,0,8,0"
+                VerticalAlignment="Center"
+                DockPanel.Dock="Right"
+                Orientation="Horizontal">
+                <Button
+                    Command="{Binding Undo.UndoCommand}"
+                    Content="Undo"
+                    Style="{StaticResource FlatButton}"
+                    Tag="{icons:Phosphor ArrowCounterClockwiseBold}"
+                    ToolTip="Undo Last Organization (Beta) - Ctrl+Z" />
+                <Button
+                    Command="{Binding ToggleThemeCommand}"
+                    Style="{StaticResource IconButton}"
+                    Tag="{icons:Phosphor CircleHalfBold}"
+                    ToolTip="Switch light / dark theme" />
+                <Button
+                    x:Name="HelpButton"
+                    Click="HelpButton_Click"
+                    Style="{StaticResource IconButton}"
+                    Tag="{icons:Phosphor QuestionBold}"
+                    ToolTip="Help">
+                    <Button.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Command="{Binding ShowTourCommand}" Header="Quick Tour &amp; Guide..." />
+                            <MenuItem Command="{Binding CheckForUpdatesCommand}" Header="Check for Updates..." />
+                            <Separator />
+                            <MenuItem Command="{Binding ShowAboutCommand}" Header="About TimeFold" />
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
+            </StackPanel>
+        </DockPanel>
+    </hc:Window.NonClientAreaContent>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <shell:OrganizePage Visibility="{Binding IsOrganizePage, Converter={StaticResource Boolean2VisibilityConverter}}" />
+        <Grid Visibility="{Binding IsSettingsPage, Converter={StaticResource Boolean2VisibilityConverter}}">
+            <settings:SettingsView DataContext="{Binding Settings}" />
+        </Grid>
+
+        <!-- while files move: dimmed page with the progress card -->
+        <Grid Visibility="{Binding Progress.IsActive, Converter={StaticResource Boolean2VisibilityConverter}}">
+            <Border Background="#99000000" />
+            <progress:ProgressPanel DataContext="{Binding Progress}" />
+        </Grid>
+
+        <!-- after a run: the results card -->
+        <Grid Visibility="{Binding Organize.IsComplete, Converter={StaticResource Boolean2VisibilityConverter}}">
+            <Border Background="#99000000" />
+            <organize:CompletionView DataContext="{Binding Organize}" />
+        </Grid>
+
+        <!-- status bar -->
+        <Border
+            Grid.Row="1"
+            Height="26"
+            Padding="12,0"
+            Background="{DynamicResource RegionBrush}"
+            BorderBrush="{DynamicResource BorderBrush}"
+            BorderThickness="0,1,0,0">
+            <DockPanel>
+                <TextBlock
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Right"
+                    FontSize="{StaticResource FontSize.XS}"
+                    Foreground="{DynamicResource ThirdlyTextBrush}"
+                    Text="F5 refresh · Ctrl+O open · Ctrl+Z undo · Ctrl+, settings" />
+                <TextBlock
+                    Margin="0,0,16,0"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    FontSize="{StaticResource FontSize.XS}"
+                    FontWeight="SemiBold"
+                    Foreground="{DynamicResource SecondaryTextBrush}"
+                    Text="{Binding VersionText}" />
+                <TextBlock
+                    VerticalAlignment="Center"
+                    FontSize="{StaticResource FontSize.XS}"
+                    Foreground="{DynamicResource SecondaryTextBrush}"
+                    Text="{Binding StatusText}"
+                    TextTrimming="CharacterEllipsis" />
+            </DockPanel>
+        </Border>
+    </Grid>
+</hc:Window>

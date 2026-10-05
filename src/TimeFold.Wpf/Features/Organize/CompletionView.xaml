@@ -1,0 +1,161 @@
+<UserControl
+    x:Class="TimeFold.Wpf.Features.Organize.CompletionView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:icons="clr-namespace:TimeFold.Wpf.Shared.Icons"
+    xmlns:local="clr-namespace:TimeFold.Wpf.Features.Organize"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DataContext="{d:DesignInstance Type=local:OrganizeViewModel}"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <Style x:Key="Tile" TargetType="Border">
+            <Setter Property="Padding" Value="14,12" />
+            <Setter Property="Background" Value="{DynamicResource SecondaryRegionBrush}" />
+            <Setter Property="CornerRadius" Value="{StaticResource Radius.Md}" />
+        </Style>
+    </UserControl.Resources>
+
+    <Border
+        Width="680"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        Style="{StaticResource DialogBorderAnimated}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Margin="28,26,28,20">
+                <Grid Width="52" Height="52" HorizontalAlignment="Center">
+                    <Ellipse Fill="{DynamicResource SuccessBrush}" Opacity="0.16" />
+                    <Path
+                        Width="24"
+                        Height="24"
+                        Data="{icons:Phosphor CheckBold}"
+                        Fill="{DynamicResource SuccessBrush}"
+                        Stretch="Uniform" />
+                </Grid>
+                <TextBlock
+                    Margin="0,12,0,0"
+                    HorizontalAlignment="Center"
+                    FontSize="{StaticResource FontSize.Title}"
+                    FontWeight="SemiBold"
+                    Foreground="{DynamicResource PrimaryTextBrush}"
+                    Text="Organization Complete!" />
+                <TextBlock
+                    Margin="0,4,0,0"
+                    HorizontalAlignment="Center"
+                    Style="{StaticResource CaptionText}"
+                    Text="All selected files and folders have been moved into their target folders." />
+
+                <!-- the numbers -->
+                <UniformGrid Margin="0,20,0,0" Rows="1">
+                    <Border Margin="0,0,6,0" Style="{StaticResource Tile}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource StatLabel}" Text="ORGANIZED" />
+                            <TextBlock Style="{StaticResource StatValue}" Text="{Binding MovedText}" />
+                            <TextBlock Style="{StaticResource CaptionText}" Text="{Binding MovedCaption}" />
+                        </StackPanel>
+                    </Border>
+                    <Border Margin="6,0" Style="{StaticResource Tile}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource StatLabel}" Text="FOLDERS CREATED" />
+                            <TextBlock Style="{StaticResource StatValue}" Text="{Binding FoldersCreatedText}" />
+                            <TextBlock Style="{StaticResource CaptionText}" Text="target folder(s)" />
+                        </StackPanel>
+                    </Border>
+                    <Border Margin="6,0" Style="{StaticResource Tile}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource StatLabel}" Text="AUTO-RENAMED" />
+                            <TextBlock Style="{StaticResource StatValue}" Text="{Binding Result.ConflictsResolved}" />
+                            <TextBlock Style="{StaticResource CaptionText}" Text="name conflicts" />
+                        </StackPanel>
+                    </Border>
+                    <Border Margin="6,0,0,0" Style="{StaticResource Tile}">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource StatLabel}" Text="ERRORS" />
+                            <TextBlock Text="{Binding Result.Errors}">
+                                <TextBlock.Style>
+                                    <Style BasedOn="{StaticResource StatValue}" TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasErrors}" Value="True">
+                                                <Setter Property="Foreground" Value="{DynamicResource DangerBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <TextBlock FontSize="{StaticResource FontSize.Sm}" Visibility="{Binding HasErrors, Converter={StaticResource Boolean2VisibilityConverter}}">
+                                <Hyperlink Command="{Binding ShowErrorsCommand}" Foreground="{DynamicResource DangerBrush}">See details</Hyperlink>
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+                </UniformGrid>
+
+                <!-- where things went -->
+                <TextBlock Margin="0,18,0,4" Style="{StaticResource PanelHeaderText}" Text="OUTPUT FOLDER" />
+                <TextBlock Style="{StaticResource PathText}" Text="{Binding OutputPath}" />
+
+                <StackPanel Visibility="{Binding HasCsvLog, Converter={StaticResource Boolean2VisibilityConverter}}">
+                    <TextBlock Margin="0,12,0,4" Style="{StaticResource PanelHeaderText}" Text="AUDIT LOG" />
+                    <DockPanel>
+                        <Button
+                            Command="{Binding OpenCsvLogCommand}"
+                            DockPanel.Dock="Right"
+                            Style="{StaticResource IconButton}"
+                            Tag="{icons:Phosphor ArrowSquareOutBold}"
+                            ToolTip="Show the CSV log in File Explorer" />
+                        <TextBlock VerticalAlignment="Center" Style="{StaticResource PathText}" Text="{Binding Result.CsvLogPath}" />
+                    </DockPanel>
+                </StackPanel>
+
+                <!-- undo, as on the old results card -->
+                <Border
+                    Margin="0,16,0,0"
+                    Padding="12,8"
+                    Background="{DynamicResource Accent.SoftBrush}"
+                    CornerRadius="{StaticResource Radius.Md}"
+                    Visibility="{Binding Undo.HasSession, Converter={StaticResource Boolean2VisibilityConverter}}">
+                    <DockPanel>
+                        <Button
+                            Command="{Binding Undo.UndoCommand}"
+                            Content="Undo Organization (Beta)"
+                            DockPanel.Dock="Right"
+                            Style="{StaticResource ToolbarButton}"
+                            ToolTip="Roll back this organization and restore files (Beta)" />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontStyle="Italic"
+                            Style="{StaticResource CaptionText}"
+                            Text="Made a mistake?" />
+                    </DockPanel>
+                </Border>
+            </StackPanel>
+
+            <Border Grid.Row="1" Style="{StaticResource DialogFooter}">
+                <DockPanel>
+                    <Button
+                        Command="{Binding ExitCommand}"
+                        Content="Exit"
+                        DockPanel.Dock="Left"
+                        Style="{StaticResource ButtonDefault}"
+                        ToolTip="Exit TimeFold application" />
+                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                        <Button
+                            Margin="0,0,10,0"
+                            Command="{Binding StartNewCommand}"
+                            Content="Organize Another Folder"
+                            Style="{StaticResource ButtonDefault}" />
+                        <Button
+                            Command="{Binding OpenOutputCommand}"
+                            Content="Open Output Folder"
+                            Style="{StaticResource ButtonPrimary}" />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>

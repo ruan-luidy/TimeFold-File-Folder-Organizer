@@ -1,0 +1,196 @@
+<UserControl
+    x:Class="TimeFold.Wpf.Features.Modes.ModesView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:TimeFold.Wpf.Shared.Controls"
+    xmlns:core="clr-namespace:TimeFold.Core.Settings;assembly=TimeFold.Core"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:icons="clr-namespace:TimeFold.Wpf.Shared.Icons"
+    xmlns:local="clr-namespace:TimeFold.Wpf.Features.Modes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DataContext="{d:DesignInstance Type=local:ModesViewModel}"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <Style x:Key="ModeIcon" TargetType="Path">
+            <Setter Property="Width" Value="15" />
+            <Setter Property="Height" Value="15" />
+            <Setter Property="Margin" Value="0,1,10,0" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Stretch" Value="Uniform" />
+            <Setter Property="Fill" Value="{DynamicResource PrimaryBrush}" />
+        </Style>
+
+        <Style x:Key="ModeTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="{StaticResource FontSize.Body}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+        </Style>
+
+        <Style x:Key="ModeExample" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,1,0,0" />
+            <Setter Property="FontFamily" Value="{StaticResource FontFamily.Numbers}" />
+            <Setter Property="FontSize" Value="{StaticResource FontSize.XS}" />
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        </Style>
+
+        <Style x:Key="GroupLabel" TargetType="TextBlock">
+            <Setter Property="Margin" Value="2,4,0,6" />
+            <Setter Property="FontSize" Value="{StaticResource FontSize.XS}" />
+            <Setter Property="Foreground" Value="{DynamicResource ThirdlyTextBrush}" />
+        </Style>
+    </UserControl.Resources>
+
+    <Border Style="{StaticResource SurfaceCard}">
+        <StackPanel>
+            <DockPanel Margin="0,0,0,8">
+                <Button
+                    Command="{Binding CustomizeFileTypesCommand}"
+                    Content="File types"
+                    DockPanel.Dock="Right"
+                    Style="{StaticResource FlatButton}"
+                    Tag="{icons:Phosphor SlidersHorizontalBold}"
+                    ToolTip="Customize file type rules" />
+                <TextBlock Style="{StaticResource PanelHeaderText}" Text="STRUCTURE" />
+            </DockPanel>
+
+            <TextBlock Style="{StaticResource GroupLabel}" Text="Simple · 1-level folders" />
+            <RadioButton IsChecked="{Binding Mode, Converter={StaticResource EnumToBoolean}, ConverterParameter={x:Static core:OrganizationMode.Date}}" Style="{StaticResource OptionCard}">
+                <DockPanel>
+                    <Path Data="{icons:Phosphor CalendarBlankBold}" Style="{StaticResource ModeIcon}" />
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource ModeTitle}" Text="By date timeline" />
+                        <TextBlock Style="{StaticResource ModeExample}" Text="{Binding DateExample}" />
+                    </StackPanel>
+                </DockPanel>
+            </RadioButton>
+            <RadioButton IsChecked="{Binding Mode, Converter={StaticResource EnumToBoolean}, ConverterParameter={x:Static core:OrganizationMode.Category}}" Style="{StaticResource OptionCard}">
+                <DockPanel>
+                    <Path Data="{icons:Phosphor SquaresFourBold}" Style="{StaticResource ModeIcon}" />
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource ModeTitle}" Text="By smart category" />
+                        <TextBlock Style="{StaticResource ModeExample}" Text="Images, Documents, Video..." />
+                    </StackPanel>
+                </DockPanel>
+            </RadioButton>
+            <RadioButton IsChecked="{Binding Mode, Converter={StaticResource EnumToBoolean}, ConverterParameter={x:Static core:OrganizationMode.Extension}}" Style="{StaticResource OptionCard}">
+                <DockPanel>
+                    <Path Data="{icons:Phosphor TagBold}" Style="{StaticResource ModeIcon}" />
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource ModeTitle}" Text="By file extension" />
+                        <TextBlock Style="{StaticResource ModeExample}" Text="JPG, PDF, ZIP..." />
+                    </StackPanel>
+                </DockPanel>
+            </RadioButton>
+
+            <TextBlock Style="{StaticResource GroupLabel}" Text="Hybrid · 2-level nested" />
+            <RadioButton IsChecked="{Binding Mode, Converter={StaticResource EnumToBoolean}, ConverterParameter={x:Static core:OrganizationMode.CategoryAndDate}}" Style="{StaticResource OptionCard}">
+                <DockPanel>
+                    <Path Data="{icons:Phosphor TreeStructureBold}" Style="{StaticResource ModeIcon}" />
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource ModeTitle}" Text="Category / Date" />
+                        <TextBlock Style="{StaticResource ModeExample}" Text="{Binding CategoryAndDateExample}" />
+                    </StackPanel>
+                </DockPanel>
+            </RadioButton>
+            <RadioButton IsChecked="{Binding Mode, Converter={StaticResource EnumToBoolean}, ConverterParameter={x:Static core:OrganizationMode.DateAndCategory}}" Style="{StaticResource OptionCard}">
+                <DockPanel>
+                    <Path Data="{icons:Phosphor ArrowsClockwiseBold}" Style="{StaticResource ModeIcon}" />
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource ModeTitle}" Text="Date / Category" />
+                        <TextBlock Style="{StaticResource ModeExample}" Text="{Binding DateAndCategoryExample}" />
+                    </StackPanel>
+                </DockPanel>
+            </RadioButton>
+
+            <!-- the active date format; opens the naming template -->
+            <Button
+                Margin="0,4,0,0"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                Command="{Binding CustomizeNamingCommand}"
+                Cursor="Hand"
+                IsEnabled="{Binding UsesDate}"
+                ToolTip="{Binding FormatTooltip}"
+                ToolTipService.ShowOnDisabled="True">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="Bd"
+                            Height="30"
+                            Padding="10,0"
+                            Background="{DynamicResource SecondaryRegionBrush}"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="{StaticResource Radius.Md}">
+                            <ContentPresenter VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.5" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Button.Template>
+                <DockPanel>
+                    <Path
+                        Width="12"
+                        Height="12"
+                        Data="{icons:Phosphor GearSixBold}"
+                        DockPanel.Dock="Right"
+                        Fill="{DynamicResource SecondaryTextBrush}"
+                        Stretch="Uniform" />
+                    <TextBlock
+                        Margin="0,0,8,0"
+                        VerticalAlignment="Center"
+                        Style="{StaticResource PanelHeaderText}"
+                        Text="FORMAT" />
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontFamily="{StaticResource FontFamily.Numbers}"
+                        FontSize="{StaticResource FontSize.Sm}"
+                        Foreground="{DynamicResource Target.Brush}"
+                        Text="{Binding FormatBadge}"
+                        TextTrimming="CharacterEllipsis" />
+                </DockPanel>
+            </Button>
+
+            <Border Style="{StaticResource Divider}" Margin="0,12,0,6" />
+
+            <!-- folder rules: only in the category and extension modes -->
+            <TextBlock Margin="0,0,0,4" Style="{StaticResource PanelHeaderText}" Text="FOLDER RULES" />
+            <controls:SettingRow IsEnabled="{Binding IsDateMode, Converter={StaticResource Boolean2BooleanReConverter}}" Label="Group Git repositories">
+                <ToggleButton IsChecked="{Binding GroupGitRepositories}" Style="{StaticResource RowSwitch}" />
+            </controls:SettingRow>
+            <controls:SettingRow IsEnabled="{Binding IsDateMode, Converter={StaticResource Boolean2BooleanReConverter}}" Label="Keep HTML companion folders together">
+                <ToggleButton IsChecked="{Binding KeepHtmlCompanionsTogether}" Style="{StaticResource RowSwitch}" />
+            </controls:SettingRow>
+            <controls:SettingRow IsEnabled="{Binding IsDateMode, Converter={StaticResource Boolean2BooleanReConverter}}" Label="Package video and subtitles">
+                <ToggleButton IsChecked="{Binding PackageVideoSubtitles}" Style="{StaticResource RowSwitch}" />
+            </controls:SettingRow>
+
+            <TextBlock
+                Margin="0,6,0,0"
+                Style="{StaticResource CaptionText}"
+                Text="{Binding RulesSummary}" />
+            <TextBlock
+                Margin="0,6,0,0"
+                FontSize="{StaticResource FontSize.Sm}"
+                Visibility="{Binding IsDateMode, Converter={StaticResource Boolean2VisibilityConverter}}">
+                <Hyperlink Command="{Binding SwitchToCategoryCommand}" Foreground="{DynamicResource PrimaryBrush}">Switch to By Smart Category to enable folder rules</Hyperlink>
+            </TextBlock>
+
+            <Button
+                Margin="0,8,0,0"
+                HorizontalAlignment="Left"
+                Command="{Binding OpenExclusionsCommand}"
+                Content="{Binding ExclusionsText}"
+                Style="{StaticResource FlatButton}"
+                Tag="{icons:Phosphor ShieldCheckBold}" />
+        </StackPanel>
+    </Border>
+</UserControl>

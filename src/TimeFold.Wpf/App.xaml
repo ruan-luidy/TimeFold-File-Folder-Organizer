@@ -1,0 +1,23 @@
+<Application
+    x:Class="TimeFold.Wpf.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:TimeFold.Wpf.Shared.Converters"
+    xmlns:hc="https://handyorg.github.io/handycontrol">
+
+    <!-- No StartupUri: the window comes from the DI container in App.xaml.cs -->
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- HandyControl with the Terminal accent; ThemeService switches it between dark and light -->
+                <hc:ThemeResources AccentColor="#3778bf" RequestedTheme="Dark" />
+                <hc:Theme />
+                <ResourceDictionary Source="/Shared/Styles/DesignSystem.xaml" />
+                <ResourceDictionary Source="/Shared/Styles/Components.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <converters:EnumToBooleanConverter x:Key="EnumToBoolean" />
+            <converters:AreEqualConverter x:Key="AreEqual" />
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

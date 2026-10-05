@@ -1,0 +1,126 @@
+<UserControl
+    x:Class="TimeFold.Wpf.Features.Exclusions.ExclusionsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:TimeFold.Wpf.Shared.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:icons="clr-namespace:TimeFold.Wpf.Shared.Icons"
+    xmlns:local="clr-namespace:TimeFold.Wpf.Features.Exclusions"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DataContext="{d:DesignInstance Type=local:ExclusionsViewModel}"
+    mc:Ignorable="d">
+
+    <controls:MasonryPanel Style="{StaticResource SettingsPage}">
+        <controls:SettingsPanel
+            Description="Folders matching these names or containing a .timefold-ignore file are preserved intact and skipped during organization."
+            Header="Excluded folders"
+            Icon="{icons:Phosphor ShieldCheckBold}">
+            <StackPanel>
+                <controls:SettingRow Description="Turn off to organize ignored folders this time without removing their markers" Label="Enable folder exclusions">
+                    <ToggleButton IsChecked="{Binding EnableExclusions}" Style="{StaticResource RowSwitch}" />
+                </controls:SettingRow>
+
+                <Border Style="{StaticResource Divider}" />
+
+                <!-- markers are written into the subfolders of the source folder -->
+                <TextBlock
+                    Margin="0,4,0,8"
+                    Foreground="{DynamicResource WarningBrush}"
+                    Style="{StaticResource CaptionText}"
+                    Text="Choose a source folder first: the rules are .timefold-ignore files inside its subfolders."
+                    Visibility="{Binding HasSource, Converter={StaticResource Boolean2VisibilityReConverter}}" />
+
+                <StackPanel IsEnabled="{Binding HasSource}">
+                    <TextBlock Margin="0,4,0,4" Style="{StaticResource PanelHeaderText}" Text="FOLDER NAME TO EXCLUDE" />
+                    <DockPanel Margin="0,0,0,8">
+                        <Button
+                            Margin="6,0,0,0"
+                            Command="{Binding AddCommand}"
+                            Content="Add"
+                            DockPanel.Dock="Right"
+                            Style="{StaticResource ToolbarButtonPrimary}" />
+                        <hc:TextBox
+                            hc:InfoElement.Placeholder="e.g. Projects"
+                            KeyDown="NewFolder_KeyDown"
+                            Text="{Binding NewFolder, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
+
+                    <Border
+                        MinHeight="160"
+                        Padding="4"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="{StaticResource Radius.Md}">
+                        <Grid>
+                            <ItemsControl ItemsSource="{Binding Folders}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border x:Name="Row" Padding="8,4" CornerRadius="{StaticResource Radius.Sm}" Background="Transparent">
+                                            <DockPanel>
+                                                <Button
+                                                    Command="{Binding DataContext.RemoveCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding}"
+                                                    DockPanel.Dock="Right"
+                                                    Style="{StaticResource IconButton}"
+                                                    Tag="{icons:Phosphor XBold}"
+                                                    ToolTip="Remove" />
+                                                <Path
+                                                    Width="13"
+                                                    Height="13"
+                                                    Margin="0,0,8,0"
+                                                    Data="{icons:Phosphor ShieldCheckBold}"
+                                                    Fill="{DynamicResource WarningBrush}"
+                                                    Stretch="Uniform" />
+                                                <TextBlock VerticalAlignment="Center" Style="{StaticResource BodyText}" Text="{Binding}" />
+                                            </DockPanel>
+                                        </Border>
+                                        <DataTemplate.Triggers>
+                                            <Trigger SourceName="Row" Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Row" Property="Background" Value="{DynamicResource Hover.RowBrush}" />
+                                            </Trigger>
+                                        </DataTemplate.Triggers>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource ThirdlyTextBrush}"
+                                Style="{StaticResource CaptionText}"
+                                Text="No excluded folders"
+                                Visibility="{Binding IsEmpty, Converter={StaticResource Boolean2VisibilityConverter}}" />
+                        </Grid>
+                    </Border>
+                </StackPanel>
+
+                <DockPanel Margin="0,10,0,0">
+                    <Button
+                        Command="{Binding SaveCommand}"
+                        Content="Save &amp; Apply"
+                        DockPanel.Dock="Right"
+                        IsEnabled="{Binding HasChanges}"
+                        Style="{StaticResource ToolbarButtonPrimary}" />
+                    <Button
+                        HorizontalAlignment="Left"
+                        Command="{Binding ClearCommand}"
+                        Content="Clear All"
+                        Style="{StaticResource FlatButton}"
+                        Tag="{icons:Phosphor TrashBold}" />
+                </DockPanel>
+            </StackPanel>
+        </controls:SettingsPanel>
+
+        <controls:SettingsPanel
+            Description="You can also protect a folder by hand, without this list"
+            Header="The .timefold-ignore marker"
+            Icon="{icons:Phosphor FileLockBold}">
+            <StackPanel>
+                <TextBlock Style="{StaticResource BodyText}" Text="A folder that contains a file named .timefold-ignore is treated as off-limits: TimeFold leaves it and everything inside it alone." />
+                <TextBlock Margin="0,8,0,0" Style="{StaticResource CaptionText}" Text="Right-click a folder in the preview and choose Ignore folder to create the marker, or paste a .timefold-ignore file into any folder yourself. Delete the file to let TimeFold organize the folder again." />
+                <TextBlock Margin="0,12,0,4" Style="{StaticResource PanelHeaderText}" Text="SOURCE FOLDER" />
+                <TextBlock Style="{StaticResource PathText}" Text="{Binding SourceFolder}" />
+            </StackPanel>
+        </controls:SettingsPanel>
+    </controls:MasonryPanel>
+</UserControl>

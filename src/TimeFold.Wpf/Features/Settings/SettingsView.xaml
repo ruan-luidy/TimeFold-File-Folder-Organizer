@@ -1,0 +1,379 @@
+<UserControl
+    x:Class="TimeFold.Wpf.Features.Settings.SettingsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:TimeFold.Wpf.Shared.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:exclusions="clr-namespace:TimeFold.Wpf.Features.Exclusions"
+    xmlns:filetypes="clr-namespace:TimeFold.Wpf.Features.FileTypes"
+    xmlns:icons="clr-namespace:TimeFold.Wpf.Shared.Icons"
+    xmlns:local="clr-namespace:TimeFold.Wpf.Features.Settings"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:naming="clr-namespace:TimeFold.Wpf.Features.Naming"
+    d:DataContext="{d:DesignInstance Type=local:SettingsViewModel}"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <!-- A page is visible when the sidebar points at it; Tag is the page name -->
+        <Style x:Key="Page" TargetType="DockPanel">
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Style.Triggers>
+                <DataTrigger Value="True">
+                    <DataTrigger.Binding>
+                        <MultiBinding Converter="{StaticResource AreEqual}">
+                            <Binding Path="Page" />
+                            <Binding Path="Tag" RelativeSource="{RelativeSource Self}" />
+                        </MultiBinding>
+                    </DataTrigger.Binding>
+                    <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="NavLabel" TargetType="TextBlock">
+            <Setter Property="Margin" Value="12,0,0,0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="210" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- ===== SIDEBAR ===== -->
+        <Border
+            Background="{DynamicResource RegionBrush}"
+            BorderBrush="{DynamicResource BorderBrush}"
+            BorderThickness="0,0,1,0">
+            <DockPanel>
+                <StackPanel Margin="12,0,12,14" DockPanel.Dock="Bottom">
+                    <Button
+                        HorizontalAlignment="Left"
+                        Command="{Binding RestoreDefaultsCommand}"
+                        Content="Restore defaults"
+                        Style="{StaticResource FlatButton}"
+                        Tag="{icons:Phosphor ArrowCounterClockwiseBold}" />
+                    <TextBlock
+                        Margin="8,6,0,0"
+                        FontSize="{StaticResource FontSize.XS}"
+                        Foreground="{DynamicResource ThirdlyTextBrush}"
+                        Text="{Binding VersionText}" />
+                </StackPanel>
+
+                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,4,0,0">
+                        <TextBlock Style="{StaticResource NavGroup}" Text="ORGANIZE" />
+                        <RadioButton IsChecked="{Binding Page, Converter={StaticResource EnumToBoolean}, ConverterParameter=Dates}" Style="{StaticResource NavItem}">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{icons:Phosphor ClockBold}" Style="{StaticResource Icon}" />
+                                <TextBlock Style="{StaticResource NavLabel}" Text="Dates &amp; folders" />
+                            </StackPanel>
+                        </RadioButton>
+                        <RadioButton IsChecked="{Binding Page, Converter={StaticResource EnumToBoolean}, ConverterParameter=Naming}" Style="{StaticResource NavItem}">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{icons:Phosphor TextAaBold}" Style="{StaticResource Icon}" />
+                                <TextBlock Style="{StaticResource NavLabel}" Text="Naming" />
+                            </StackPanel>
+                        </RadioButton>
+                        <RadioButton IsChecked="{Binding Page, Converter={StaticResource EnumToBoolean}, ConverterParameter=FileTypes}" Style="{StaticResource NavItem}">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{icons:Phosphor TagBold}" Style="{StaticResource Icon}" />
+                                <TextBlock Style="{StaticResource NavLabel}" Text="File types" />
+                            </StackPanel>
+                        </RadioButton>
+                        <RadioButton IsChecked="{Binding Page, Converter={StaticResource EnumToBoolean}, ConverterParameter=Exclusions}" Style="{StaticResource NavItem}">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{icons:Phosphor ShieldCheckBold}" Style="{StaticResource Icon}" />
+                                <TextBlock Style="{StaticResource NavLabel}" Text="Exclusions" />
+                            </StackPanel>
+                        </RadioButton>
+
+                        <TextBlock Style="{StaticResource NavGroup}" Text="APP" />
+                        <RadioButton IsChecked="{Binding Page, Converter={StaticResource EnumToBoolean}, ConverterParameter=General}" Style="{StaticResource NavItem}">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{icons:Phosphor GearSixBold}" Style="{StaticResource Icon}" />
+                                <TextBlock Style="{StaticResource NavLabel}" Text="General" />
+                            </StackPanel>
+                        </RadioButton>
+                        <RadioButton IsChecked="{Binding Page, Converter={StaticResource EnumToBoolean}, ConverterParameter=Appearance}" Style="{StaticResource NavItem}">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{icons:Phosphor PaletteBold}" Style="{StaticResource Icon}" />
+                                <TextBlock Style="{StaticResource NavLabel}" Text="Appearance" />
+                            </StackPanel>
+                        </RadioButton>
+                        <RadioButton IsChecked="{Binding Page, Converter={StaticResource EnumToBoolean}, ConverterParameter=Explorer}" Style="{StaticResource NavItem}">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{icons:Phosphor CursorClickBold}" Style="{StaticResource Icon}" />
+                                <TextBlock Style="{StaticResource NavLabel}" Text="Explorer" />
+                            </StackPanel>
+                        </RadioButton>
+                        <RadioButton IsChecked="{Binding Page, Converter={StaticResource EnumToBoolean}, ConverterParameter=About}" Style="{StaticResource NavItem}">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{icons:Phosphor InfoBold}" Style="{StaticResource Icon}" />
+                                <TextBlock Style="{StaticResource NavLabel}" Text="About" />
+                            </StackPanel>
+                        </RadioButton>
+                    </StackPanel>
+                </ScrollViewer>
+            </DockPanel>
+        </Border>
+
+        <!-- ===== PAGES ===== -->
+        <ScrollViewer
+            Grid.Column="1"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto">
+            <Grid Margin="20,16,20,20">
+                <!-- dates and folders -->
+                <DockPanel Style="{StaticResource Page}" Tag="Dates">
+                    <ContentControl Content="Dates &amp; folders" Style="{StaticResource PageTitle}" Tag="Which date drives the plan, and what gets scanned" />
+                    <controls:MasonryPanel Style="{StaticResource SettingsPage}">
+                        <controls:SettingsPanel Description="Files and folders each pick one of their dates" Header="Date sources" Icon="{icons:Phosphor CalendarCheckBold}">
+                            <StackPanel>
+                                <controls:SettingRow Label="File date source">
+                                    <controls:SelectField
+                                        Width="190"
+                                        DisplayMemberPath="Label"
+                                        ItemsSource="{Binding DateSources}"
+                                        SelectedItem="{Binding FileDateSource}" />
+                                </controls:SettingRow>
+                                <controls:SettingRow Label="Folder date source">
+                                    <controls:SelectField
+                                        Width="190"
+                                        DisplayMemberPath="Label"
+                                        ItemsSource="{Binding DateSources}"
+                                        SelectedItem="{Binding FolderDateSource}" />
+                                </controls:SettingRow>
+                                <controls:SettingRow
+                                    Description="JPEG, PNG, HEIC, MP4 and MOV camera timestamps"
+                                    Label="{Binding MediaDateLabel}"
+                                    ToolTip="{Binding MediaDateTooltip}">
+                                    <ToggleButton IsChecked="{Binding UseMediaDateTaken}" Style="{StaticResource RowSwitch}" />
+                                </controls:SettingRow>
+                            </StackPanel>
+                        </controls:SettingsPanel>
+
+                        <controls:SettingsPanel Description="What the scan picks up from the source folder" Header="File &amp; folder rules" Icon="{icons:Phosphor FolderSimpleBold}">
+                            <StackPanel>
+                                <controls:SettingRow Description="Keeps their contents intact" Label="Also organize folders">
+                                    <ToggleButton IsChecked="{Binding IncludeTopLevelFolders}" Style="{StaticResource RowSwitch}" />
+                                </controls:SettingRow>
+                                <controls:SettingRow Description="Category modes" IsEnabled="{Binding IncludeTopLevelFolders}" Label="Group Git repositories into a dedicated folder">
+                                    <ToggleButton IsChecked="{Binding GroupGitRepositories}" Style="{StaticResource RowSwitch}" />
+                                </controls:SettingRow>
+                                <controls:SettingRow IsEnabled="{Binding IncludeTopLevelFolders}" Label="Keep HTML companion folders together">
+                                    <ToggleButton IsChecked="{Binding KeepHtmlCompanionsTogether}" Style="{StaticResource RowSwitch}" />
+                                </controls:SettingRow>
+                                <controls:SettingRow Description="Category modes" IsEnabled="{Binding IncludeTopLevelFolders}" Label="Group video and subtitles into a movie folder">
+                                    <ToggleButton IsChecked="{Binding PackageVideoSubtitles}" Style="{StaticResource RowSwitch}" />
+                                </controls:SettingRow>
+                                <Border Style="{StaticResource Divider}" />
+                                <controls:SettingRow Description="desktop.ini, Thumbs.db, $RECYCLE.BIN" Label="Ignore Windows system files and protected folders">
+                                    <ToggleButton IsChecked="{Binding IgnoreSystemFiles}" Style="{StaticResource RowSwitch}" />
+                                </controls:SettingRow>
+                            </StackPanel>
+                        </controls:SettingsPanel>
+                    </controls:MasonryPanel>
+                </DockPanel>
+
+                <DockPanel Style="{StaticResource Page}" Tag="Naming">
+                    <ContentControl Content="Naming" Style="{StaticResource PageTitle}" Tag="How the date folders are named" />
+                    <naming:NamingPage DataContext="{Binding Naming}" />
+                </DockPanel>
+
+                <DockPanel Style="{StaticResource Page}" Tag="FileTypes">
+                    <ContentControl Content="File types" Style="{StaticResource PageTitle}" Tag="Which category each extension goes to" />
+                    <filetypes:FileTypesPage DataContext="{Binding FileTypes}" />
+                </DockPanel>
+
+                <DockPanel Style="{StaticResource Page}" Tag="Exclusions">
+                    <ContentControl Content="Exclusions" Style="{StaticResource PageTitle}" Tag="Folders TimeFold never touches" />
+                    <exclusions:ExclusionsPage DataContext="{Binding Exclusions}" />
+                </DockPanel>
+
+                <!-- general -->
+                <DockPanel Style="{StaticResource Page}" Tag="General">
+                    <ContentControl Content="General" Style="{StaticResource PageTitle}" Tag="Behavior, logging and performance" />
+                    <controls:MasonryPanel Style="{StaticResource SettingsPage}">
+                        <controls:SettingsPanel Description="What happens while and after files move" Header="Organizing" Icon="{icons:Phosphor PlayCircleBold}">
+                            <StackPanel>
+                                <controls:SettingRow Label="Show detailed progress during organization">
+                                    <ToggleButton IsChecked="{Binding ShowDetailedProgress}" Style="{StaticResource RowSwitch}" />
+                                </controls:SettingRow>
+                                <controls:SettingRow Description="A timestamped list of every move" Label="Generate CSV audit log in the output directory">
+                                    <ToggleButton IsChecked="{Binding GenerateCsvLog}" Style="{StaticResource RowSwitch}" />
+                                </controls:SettingRow>
+                                <controls:SettingRow Description="{Binding SortedFolderExample}" Label="Use 24-hour time for the output folder">
+                                    <ToggleButton IsChecked="{Binding Use24HourTimestamp}" Style="{StaticResource RowSwitch}" />
+                                </controls:SettingRow>
+                            </StackPanel>
+                        </controls:SettingsPanel>
+
+                        <controls:SettingsPanel Description="The window and startup" Header="Application" Icon="{icons:Phosphor AppWindowBold}">
+                            <StackPanel>
+                                <controls:SettingRow Label="Keep the window always on top">
+                                    <ToggleButton IsChecked="{Binding ShowOnTop}" Style="{StaticResource RowSwitch}" />
+                                </controls:SettingRow>
+                                <controls:SettingRow Description="Scans the folder TimeFold.exe is in" Label="Auto-load the application folder on startup">
+                                    <ToggleButton IsChecked="{Binding AutoLoadExeDirectoryOnStartup}" Style="{StaticResource RowSwitch}" />
+                                </controls:SettingRow>
+                                <controls:SettingRow Label="Check for updates on startup">
+                                    <ToggleButton IsChecked="{Binding CheckForUpdatesOnStartup}" Style="{StaticResource RowSwitch}" />
+                                </controls:SettingRow>
+                            </StackPanel>
+                        </controls:SettingsPanel>
+
+                        <controls:SettingsPanel Description="Large folders load in pages" Header="Preview" Icon="{icons:Phosphor ListBulletsBold}">
+                            <StackPanel>
+                                <controls:SettingRow Label="Preview items limit">
+                                    <controls:SelectField
+                                        Width="190"
+                                        DisplayMemberPath="Label"
+                                        ItemsSource="{Binding PreviewLimits}"
+                                        SelectedItem="{Binding PreviewLimit}" />
+                                </controls:SettingRow>
+                                <TextBlock
+                                    Margin="0,6,0,0"
+                                    Foreground="{DynamicResource WarningBrush}"
+                                    Style="{StaticResource CaptionText}"
+                                    Text="High preview limits (more than 2,000) may make the list slow on massive folders."
+                                    Visibility="{Binding ShowPreviewLimitWarning, Converter={StaticResource Boolean2VisibilityConverter}}" />
+                            </StackPanel>
+                        </controls:SettingsPanel>
+                    </controls:MasonryPanel>
+                </DockPanel>
+
+                <!-- appearance -->
+                <DockPanel Style="{StaticResource Page}" Tag="Appearance">
+                    <ContentControl Content="Appearance" Style="{StaticResource PageTitle}" Tag="Light or dark" />
+                    <controls:MasonryPanel Style="{StaticResource SettingsPage}">
+                        <controls:SettingsPanel Description="Applied right away" Header="Theme" Icon="{icons:Phosphor PaletteBold}">
+                            <UniformGrid Columns="2">
+                                <RadioButton Margin="0,0,6,0" IsChecked="{Binding IsLight}" Style="{StaticResource OptionCard}">
+                                    <StackPanel>
+                                        <Border
+                                            Height="64"
+                                            Margin="0,0,0,8"
+                                            Background="#F3F3F5"
+                                            BorderBrush="#D0D0D6"
+                                            BorderThickness="1"
+                                            CornerRadius="4">
+                                            <Grid Margin="8">
+                                                <Border Width="40" HorizontalAlignment="Left" Background="#FFFFFF" CornerRadius="3" />
+                                                <Border Margin="48,0,0,0" Background="#FFFFFF" CornerRadius="3" />
+                                            </Grid>
+                                        </Border>
+                                        <TextBlock FontWeight="SemiBold" Style="{StaticResource BodyText}" Text="Light" />
+                                    </StackPanel>
+                                </RadioButton>
+                                <RadioButton Margin="6,0,0,0" IsChecked="{Binding IsDark}" Style="{StaticResource OptionCard}">
+                                    <StackPanel>
+                                        <Border
+                                            Height="64"
+                                            Margin="0,0,0,8"
+                                            Background="#111113"
+                                            BorderBrush="#3A3A3F"
+                                            BorderThickness="1"
+                                            CornerRadius="4">
+                                            <Grid Margin="8">
+                                                <Border Width="40" HorizontalAlignment="Left" Background="#1C1C1C" CornerRadius="3" />
+                                                <Border Margin="48,0,0,0" Background="#1C1C1C" CornerRadius="3" />
+                                            </Grid>
+                                        </Border>
+                                        <TextBlock FontWeight="SemiBold" Style="{StaticResource BodyText}" Text="Dark" />
+                                    </StackPanel>
+                                </RadioButton>
+                            </UniformGrid>
+                        </controls:SettingsPanel>
+                    </controls:MasonryPanel>
+                </DockPanel>
+
+                <!-- explorer -->
+                <DockPanel Style="{StaticResource Page}" Tag="Explorer">
+                    <ContentControl Content="Explorer" Style="{StaticResource PageTitle}" Tag="Windows integration and where settings live" />
+                    <controls:MasonryPanel Style="{StaticResource SettingsPage}">
+                        <controls:SettingsPanel Description="'Open in TimeFold' on folders in File Explorer, added by the installer" Header="Context menu" Icon="{icons:Phosphor CursorClickBold}">
+                            <StackPanel>
+                                <!-- installed build -->
+                                <StackPanel Visibility="{Binding IsInstalledBuild, Converter={StaticResource Boolean2VisibilityConverter}}">
+                                    <DockPanel Visibility="{Binding IsContextMenuActive, Converter={StaticResource Boolean2VisibilityConverter}}">
+                                        <Path Width="14" Height="14" Margin="0,0,8,0" Data="{icons:Phosphor CheckCircleFill}" Fill="{DynamicResource SuccessBrush}" Stretch="Uniform" />
+                                        <TextBlock VerticalAlignment="Center" Style="{StaticResource BodyText}" Text="Explorer context menu is active" />
+                                    </DockPanel>
+                                    <StackPanel Visibility="{Binding IsContextMenuActive, Converter={StaticResource Boolean2VisibilityReConverter}}">
+                                        <DockPanel>
+                                            <Path Width="14" Height="14" Margin="0,0,8,0" Data="{icons:Phosphor WarningBold}" Fill="{DynamicResource WarningBrush}" Stretch="Uniform" />
+                                            <TextBlock VerticalAlignment="Center" Style="{StaticResource BodyText}" Text="Explorer context menu is not installed." />
+                                        </DockPanel>
+                                        <TextBlock Margin="22,4,0,0" FontSize="{StaticResource FontSize.Sm}">
+                                            <Hyperlink Command="{Binding OpenReleasesCommand}" Foreground="{DynamicResource PrimaryBrush}">Run installer to restore →</Hyperlink>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </StackPanel>
+                                <!-- portable build -->
+                                <TextBlock
+                                    Style="{StaticResource CaptionText}"
+                                    Text="This is a portable build. The context menu comes with the installer from the releases page."
+                                    Visibility="{Binding IsInstalledBuild, Converter={StaticResource Boolean2VisibilityReConverter}}" />
+                            </StackPanel>
+                        </controls:SettingsPanel>
+
+                        <controls:SettingsPanel Description="settings.json, custom_types.json and the last undo session" Header="Configuration" Icon="{icons:Phosphor FolderOpenBold}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource PathText}" Text="{Binding ConfigFolder}" />
+                                <Button
+                                    Margin="0,10,0,0"
+                                    HorizontalAlignment="Left"
+                                    Command="{Binding OpenConfigLocationCommand}"
+                                    Content="Open config location"
+                                    Style="{StaticResource ToolbarButton}" />
+                            </StackPanel>
+                        </controls:SettingsPanel>
+                    </controls:MasonryPanel>
+                </DockPanel>
+
+                <!-- about -->
+                <DockPanel Style="{StaticResource Page}" Tag="About">
+                    <ContentControl Content="About" Style="{StaticResource PageTitle}" Tag="Version and license" />
+                    <controls:MasonryPanel Style="{StaticResource SettingsPage}">
+                        <controls:SettingsPanel Description="{Binding VersionText}" Header="{Binding AppName}" Icon="{icons:Phosphor InfoBold}">
+                            <StackPanel>
+                                <DockPanel Margin="0,0,0,10">
+                                    <Image
+                                        Width="56"
+                                        Height="56"
+                                        Margin="0,0,14,0"
+                                        VerticalAlignment="Top"
+                                        Source="pack://application:,,,/TimeFold;component/Assets/app.png" />
+                                    <TextBlock Style="{StaticResource BodyText}" Text="{Binding Description}" />
+                                </DockPanel>
+                                <controls:SettingRow Label="Developer">
+                                    <TextBlock Style="{StaticResource BodyText}" Text="{Binding Author}" />
+                                </controls:SettingRow>
+                                <controls:SettingRow Label="Project">
+                                    <TextBlock FontSize="{StaticResource FontSize.Sm}">
+                                        <Hyperlink Command="{Binding OpenRepositoryCommand}" Foreground="{DynamicResource PrimaryBrush}">GitHub</Hyperlink>
+                                    </TextBlock>
+                                </controls:SettingRow>
+                                <TextBlock Margin="0,8,0,0" Style="{StaticResource CaptionText}" Text="{Binding LicenseText}" />
+                            </StackPanel>
+                        </controls:SettingsPanel>
+
+                        <controls:SettingsPanel Description="Updates and the welcome tour" Header="Help" Icon="{icons:Phosphor LifebuoyBold}">
+                            <StackPanel>
+                                <controls:SettingRow Description="Looks at the latest GitHub release" Label="Check for updates">
+                                    <Button Command="{Binding CheckForUpdatesCommand}" Content="Check now" Style="{StaticResource ToolbarButton}" />
+                                </controls:SettingRow>
+                                <controls:SettingRow Description="What TimeFold does, in six slides" Label="Quick tour &amp; guide">
+                                    <Button Command="{Binding ShowTourCommand}" Content="Open tour" Style="{StaticResource ToolbarButton}" />
+                                </controls:SettingRow>
+                            </StackPanel>
+                        </controls:SettingsPanel>
+                    </controls:MasonryPanel>
+                </DockPanel>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

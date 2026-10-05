@@ -1,0 +1,76 @@
+<controls:DialogCard
+    x:Class="TimeFold.Wpf.Features.Updates.UpdateDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:TimeFold.Wpf.Shared.Controls"
+    xmlns:icons="clr-namespace:TimeFold.Wpf.Shared.Icons"
+    Width="480"
+    Background="Transparent">
+
+    <Border Style="{StaticResource DialogBorderAnimated}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Margin="24,20,24,18">
+                <DockPanel>
+                    <Grid
+                        Width="36"
+                        Height="36"
+                        Margin="0,0,12,0"
+                        DockPanel.Dock="Left">
+                        <Border Background="{DynamicResource Accent.SoftBrush}" CornerRadius="{StaticResource Radius.Md}" />
+                        <Path
+                            Width="18"
+                            Height="18"
+                            Data="{icons:Phosphor SparkleBold}"
+                            Fill="{DynamicResource PrimaryBrush}"
+                            Stretch="Uniform" />
+                    </Grid>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock x:Name="TitleText" Style="{StaticResource DialogTitle}" />
+                        <TextBlock x:Name="CurrentText" Style="{StaticResource CaptionText}" />
+                    </StackPanel>
+                </DockPanel>
+
+                <Border
+                    MaxHeight="220"
+                    Margin="0,14,0,0"
+                    Padding="12,10"
+                    Background="{DynamicResource SecondaryRegionBrush}"
+                    CornerRadius="{StaticResource Radius.Md}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <TextBlock x:Name="SummaryText" Style="{StaticResource BodyText}" />
+                    </ScrollViewer>
+                </Border>
+
+                <TextBlock x:Name="NotesLink" Margin="0,10,0,0" FontSize="{StaticResource FontSize.Sm}">
+                    <Hyperlink Click="Notes_Click" Foreground="{DynamicResource PrimaryBrush}">View full release notes on GitHub →</Hyperlink>
+                </TextBlock>
+            </StackPanel>
+
+            <Border Grid.Row="1" Style="{StaticResource DialogFooter}">
+                <DockPanel>
+                    <Button
+                        Click="Skip_Click"
+                        Content="Skip This Version"
+                        DockPanel.Dock="Left"
+                        Style="{StaticResource ButtonDefault}" />
+                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                        <Button
+                            Margin="0,0,10,0"
+                            Click="Later_Click"
+                            Content="Remind Me Later"
+                            Style="{StaticResource ButtonDefault}" />
+                        <Button
+                            Click="Download_Click"
+                            Content="Download Update"
+                            Style="{StaticResource ButtonPrimary}" />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Border>
+</controls:DialogCard>

@@ -1,0 +1,108 @@
+<UserControl
+    x:Class="TimeFold.Wpf.Shell.OrganizePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:icons="clr-namespace:TimeFold.Wpf.Shared.Icons"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:modes="clr-namespace:TimeFold.Wpf.Features.Modes"
+    xmlns:preview="clr-namespace:TimeFold.Wpf.Features.Preview"
+    xmlns:shell="clr-namespace:TimeFold.Wpf.Shell"
+    xmlns:source="clr-namespace:TimeFold.Wpf.Features.Source"
+    AllowDrop="True"
+    Background="Transparent"
+    DragEnter="Page_DragOver"
+    DragLeave="Page_DragLeave"
+    DragOver="Page_DragOver"
+    Drop="Page_Drop"
+    d:DataContext="{d:DesignInstance Type=shell:MainViewModel}"
+    mc:Ignorable="d">
+
+    <!-- Left: where from, where to and how. Right: the plan and the button that runs it -->
+    <Grid Margin="12">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="320" />
+            <ColumnDefinition Width="12" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <source:SourceView DataContext="{Binding Source}" />
+                <modes:ModesView DataContext="{Binding Modes}" />
+            </StackPanel>
+        </ScrollViewer>
+
+        <DockPanel Grid.Column="2">
+            <!-- footer: the summary and Start -->
+            <Border
+                Margin="0,10,0,0"
+                Padding="14,10"
+                DockPanel.Dock="Bottom"
+                Style="{StaticResource SurfaceCard}">
+                <DockPanel>
+                    <Button
+                        Height="34"
+                        MinWidth="190"
+                        Command="{Binding Organize.StartCommand}"
+                        DockPanel.Dock="Right"
+                        Style="{StaticResource ButtonPrimary}"
+                        ToolTip="{Binding Organize.StartLabel}">
+                        <StackPanel Orientation="Horizontal">
+                            <Path
+                                Width="13"
+                                Height="13"
+                                Margin="0,0,8,0"
+                                Data="{icons:Phosphor PlayFill}"
+                                Fill="White"
+                                Stretch="Uniform" />
+                            <TextBlock FontWeight="SemiBold" Text="Start Organization" />
+                        </StackPanel>
+                    </Button>
+                    <Path
+                        x:Name="SummaryIcon"
+                        Width="16"
+                        Height="16"
+                        Margin="0,0,10,0"
+                        VerticalAlignment="Center"
+                        Stretch="Uniform">
+                        <Path.Style>
+                            <Style TargetType="Path">
+                                <Setter Property="Data" Value="{icons:Phosphor InfoBold}" />
+                                <Setter Property="Fill" Value="{DynamicResource ThirdlyTextBrush}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Preview.SummaryTone}" Value="Ready">
+                                        <Setter Property="Data" Value="{icons:Phosphor CheckCircleFill}" />
+                                        <Setter Property="Fill" Value="{DynamicResource SuccessBrush}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Preview.SummaryTone}" Value="Warning">
+                                        <Setter Property="Data" Value="{icons:Phosphor WarningBold}" />
+                                        <Setter Property="Fill" Value="{DynamicResource WarningBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Path.Style>
+                    </Path>
+                    <TextBlock VerticalAlignment="Center" Text="{Binding Preview.SummaryText}" TextWrapping="Wrap">
+                        <TextBlock.Style>
+                            <Style BasedOn="{StaticResource BodyText}" TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="{DynamicResource SecondaryTextBrush}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Preview.SummaryTone}" Value="Ready">
+                                        <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+                                        <Setter Property="FontWeight" Value="SemiBold" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Preview.SummaryTone}" Value="Warning">
+                                        <Setter Property="Foreground" Value="{DynamicResource WarningBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </DockPanel>
+            </Border>
+
+            <preview:PreviewView DataContext="{Binding Preview}" />
+        </DockPanel>
+    </Grid>
+</UserControl>

@@ -1,0 +1,108 @@
+<controls:DialogCard
+    x:Class="TimeFold.Wpf.Features.FileTypes.CategoryPickerDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:TimeFold.Wpf.Shared.Controls"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    Width="460"
+    Background="Transparent">
+
+    <Border Style="{StaticResource DialogBorderAnimated}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Margin="24,20,24,18">
+                <TextBlock x:Name="TitleText" Style="{StaticResource DialogTitle}" />
+                <TextBlock x:Name="DescriptionText" Margin="0,8,0,12" Style="{StaticResource CaptionText}" />
+
+                <hc:TextBox
+                    x:Name="Input"
+                    Height="30"
+                    hc:InfoElement.ContentHeight="30"
+                    hc:InfoElement.Placeholder="Existing category or a new folder name"
+                    FontSize="{StaticResource FontSize.Body}"
+                    KeyDown="Input_KeyDown"
+                    MaxLength="50"
+                    TextChanged="Input_TextChanged" />
+
+                <!-- the existing categories: a click fills the field -->
+                <Border
+                    Height="190"
+                    Margin="0,8,0,0"
+                    Padding="4"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="{StaticResource Radius.Md}">
+                    <ListBox
+                        x:Name="Categories"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        SelectionChanged="Categories_SelectionChanged">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem">
+                                <Setter Property="Padding" Value="8,5" />
+                                <Setter Property="Margin" Value="0,1" />
+                                <Setter Property="Cursor" Value="Hand" />
+                                <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}" />
+                                <Setter Property="FontSize" Value="{StaticResource FontSize.Sm}" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBoxItem">
+                                            <Border x:Name="Row" Padding="{TemplateBinding Padding}" Background="Transparent" CornerRadius="{StaticResource Radius.Sm}">
+                                                <ContentPresenter />
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Row" Property="Background" Value="{DynamicResource SecondaryRegionBrush}" />
+                                                </Trigger>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter TargetName="Row" Property="Background" Value="{DynamicResource Selection.RowBrush}" />
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                    </ListBox>
+                </Border>
+
+                <TextBlock
+                    x:Name="ErrorText"
+                    Margin="0,6,0,0"
+                    FontSize="{StaticResource FontSize.Sm}"
+                    Foreground="{DynamicResource DangerBrush}"
+                    TextWrapping="Wrap"
+                    Visibility="Collapsed" />
+            </StackPanel>
+
+            <Border Grid.Row="1" Style="{StaticResource DialogFooter}">
+                <DockPanel>
+                    <Button
+                        x:Name="ResetButton"
+                        Click="Reset_Click"
+                        Content="Reset to Default"
+                        DockPanel.Dock="Left"
+                        Style="{StaticResource ButtonDefault}"
+                        Visibility="Collapsed" />
+                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                        <Button
+                            MinWidth="90"
+                            Margin="0,0,10,0"
+                            Click="Cancel_Click"
+                            Content="Cancel"
+                            Style="{StaticResource ButtonDefault}" />
+                        <Button
+                            MinWidth="90"
+                            Click="Apply_Click"
+                            Content="Apply"
+                            Style="{StaticResource ButtonPrimary}" />
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </Border>
+</controls:DialogCard>
